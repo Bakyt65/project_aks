@@ -1,0 +1,9 @@
+database:
+  name: mysql
+  user: devops_user
+  password: password
+  rootPassword: rootpassword
+  host: mysql
+  port: 3306
+  storage: 1Gi
+  image: mysql:5.7

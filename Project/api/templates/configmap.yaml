@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: devops-api-config
+data:
+  PORT: "3001"
+  DB: devops_db
+  DBUSER: devops_user
+  DBHOST: mysql
+  DBPORT: "3306"

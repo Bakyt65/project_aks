@@ -1,0 +1,9 @@
+api:
+  name: devops-api
+  replicas: 3
+  # image: makusyakarabay.azurecr.io/back
+  image: makmal1995/back
+  tag: "1.0.0"
+  port: 3001
+  configName: devops-api-config
+  secretName: devops-api-secret

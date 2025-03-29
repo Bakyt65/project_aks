@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: devops-db-config
+data:
+  MYSQL_DATABASE: "devops_db"
+  MYSQL_PORT: "3306"

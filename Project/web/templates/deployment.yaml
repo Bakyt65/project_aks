@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.web.name }}
+  labels:
+    app: devops-web
+spec:
+  replicas: {{ .Values.web.replicas }}
+  selector:
+    matchLabels:
+      app: devops-web
+  template:
+    metadata:
+      labels:
+        app: devops-web
+    spec:
+      containers:
+      - name: devops-web
+        image: {{ .Values.web.image }}:{{ .Values.web.tag }}
+        ports:
+        - containerPort: {{ .Values.web.port }}
+        env:
+        - name: PORT
+          value: "3000"
+        - name: API_HOST
+          value: http://devops-api:3001
