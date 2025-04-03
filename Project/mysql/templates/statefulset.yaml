@@ -13,6 +13,7 @@ spec:
       labels:
         app: mysql
     spec:
+    # Start of the initContainer block to be removed
       initContainers:
       - name: init-mysql
         image: busybox
@@ -20,12 +21,15 @@ spec:
         - sh
         - -c
         - rm -rf /var/lib/mysql/*
+        # - "[ -d /var/lib/mysql/mysql ] || rm -rf /var/lib/mysql/*"
         volumeMounts:
         - name: mysql-persistent-storage
           mountPath: /var/lib/mysql
+        # - 
       containers:
       - name: {{ .Values.database.name }}
         image: mysql:5.7
+        # image: mysql:5.8
         ports:
         - containerPort: {{ .Values.database.port }}
           name: {{ .Values.database.name }}

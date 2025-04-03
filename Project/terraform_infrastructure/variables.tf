@@ -24,3 +24,20 @@ variable "acr_name" {
   description = "The name of the Azure Container Registry"
   type        = string
 }
+
+variable "registry_server" {
+  description = "Container registry server URL (e.g., myregistry.azurecr.io)"
+  type        = string
+}
+
+variable "registry_username" {
+  description = "Username for the container registry"
+  type        = string
+  sensitive   = true
+}
+
+variable "registry_password" {
+  description = "Password for the container registry"
+  type        = string
+  sensitive   = true
+}

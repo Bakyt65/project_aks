@@ -56,19 +56,72 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     dns_service_ip    = "10.2.0.10"
     service_cidr      = "10.2.0.0/24"
   }
+  provisioner "local-exec" {
+  command = "az aks get-credentials --resource-group ${azurerm_resource_group.aks_rg.name} --name ${azurerm_kubernetes_cluster.aks_cluster.name} --overwrite-existing"
 }
 
+}
+#1 version 
+resource "azurerm_container_registry" "acr" {
+  name                = var.acr_name
+  resource_group_name = azurerm_resource_group.aks_rg.name
+  location            = var.location
+  sku                 = "Standard"
+  admin_enabled       = false
+}
+
+resource "azurerm_role_assignment" "acr_pull" {
+  principal_id         = azurerm_kubernetes_cluster.aks_cluster.kubelet_identity[0].object_id
+  role_definition_name = "AcrPull"
+  scope               = azurerm_container_registry.acr.id
+}
+
+resource "null_resource" "push_image" {
+  provisioner "local-exec" {
+    command = <<EOT
+      az acr login --name ${azurerm_container_registry.acr.name}
+      docker build -t ${azurerm_container_registry.acr.login_server}/my-image:v2 .
+      docker push ${azurerm_container_registry.acr.login_server}/my-image:v2
+      docker build -t ${azurerm_container_registry.acr.login_server}/my-image:v1 .
+      docker push ${azurerm_container_registry.acr.login_server}/my-image:v1
+    EOT
+  }
+  
+
+  triggers = {
+    always_run = "${timestamp()}" # Forces re-run on every apply
+  }
+}
+
+# 2 version
 # resource "azurerm_container_registry" "acr" {
 #   name                = var.acr_name
 #   resource_group_name = azurerm_resource_group.aks_rg.name
 #   location            = var.location
 #   sku                 = "Standard"
-#   admin_enabled       = false
+#   admin_enabled       = true  # ✅ Enable Admin Credentials
 # }
 
-# resource "azurerm_role_assignment" "acr_pull" {
-#   principal_id         = azurerm_kubernetes_cluster.aks_cluster.kubelet_identity[0].object_id
-#   role_definition_name = "AcrPull"
-#   scope               = azurerm_container_registry.acr.id
+# data "azurerm_container_registry" "acr" {
+#   name                = azurerm_container_registry.acr.name
+#   resource_group_name = azurerm_resource_group.aks_rg.name
 # }
 
+# resource "kubernetes_secret" "acr_secret" {
+#   metadata {
+#     name = "acr-secret"
+#   }
+
+#   type = "kubernetes.io/dockerconfigjson"
+
+#   data = {
+#     ".dockerconfigjson" = jsonencode({
+#       auths = {
+#         "${data.azurerm_container_registry.acr.login_server}" = {
+#           "username" = data.azurerm_container_registry.acr.admin_username
+#           "password" = data.azurerm_container_registry.acr.admin_password
+#         }
+#       }
+#     })
+#   }
+# }

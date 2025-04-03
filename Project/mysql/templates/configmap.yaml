@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: devops-db-config
 data:
-  MYSQL_DATABASE: "devops_db"
-  MYSQL_PORT: "3306"
+  MYSQL_DATABASE: {{ .Values.database.name }}
+  MYSQL_PORT: "{{ .Values.database.port }}"

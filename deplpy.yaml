@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  imagePullSecrets:  
+  - name: acr-secret
+  containers:
+  - name: nginx
+    image: makusyakarabay.azurecr.io/my-image:v2
+    ports:
+    - containerPort: 80

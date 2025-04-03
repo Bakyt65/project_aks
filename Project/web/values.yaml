@@ -1,10 +1,12 @@
 web:
   name: devops-web
   replicas: 3
-  # image: makusyakarabay.azurecr.io/front
-  image: makmal1995/front
-  tag: "2.0.0"
+  # image: makmal1995/front
+  # tag: "2.0.0"  
+  image: makusyakarabay.azurecr.io/my-image
+  tag: v1
   port: 3000
   apiHost: http://devops-api:3001
+  # imagePullSecret: acr-secret  
 
 
